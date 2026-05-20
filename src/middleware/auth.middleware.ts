@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import { sendError } from "../utils/response.js";
 import jwt from "jsonwebtoken";
 import { StatusCodes } from "http-status-codes";
+import envConfig from "../config/envConfig.js";
 
 
 export interface AuthRequest extends Request {
@@ -19,8 +20,14 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
     return sendError(res, StatusCodes.UNAUTHORIZED, 'Authentication token missing');
   }
 
+  const token = authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : authHeader;
+
+  if (!token) {
+    return sendError(res, StatusCodes.UNAUTHORIZED, 'Authentication token missing');
+  }
+
   try {
-    const decoded = jwt.verify(authHeader, process.env.JWT_SECRET as string) as any;
+    const decoded = jwt.verify(token, envConfig.jwtSecret) as any;
     req.user = decoded;
     next();
     

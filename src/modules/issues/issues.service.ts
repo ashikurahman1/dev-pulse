@@ -21,7 +21,7 @@ export const getAllIssues = async (filters: any) => {
   let paramCount = 1;
 
   if (filters.type) {
-    sql += `AND type = $${paramCount}`;
+    sql += ` AND type = $${paramCount}`;
     params.push(filters.type);
     paramCount++
   }
@@ -44,7 +44,7 @@ export const getAllIssues = async (filters: any) => {
 
   const reporterIds = Array.from(new Set(issues.map(issue => issue.reporter_id)))
 
-  const usersResult = await pool.query(`SELECT id, name FROM users WHERE id IN (${reporterIds.map((_, i) => `$${i + 1}`).join(',')})`, [reporterIds])
+  const usersResult = await pool.query(`SELECT id, name FROM users WHERE id IN (${reporterIds.map((_, i) => `$${i + 1}`).join(',')})`, reporterIds)
 
   const userMap = new Map(usersResult.rows.map((user) => [user.id, user]))
 
