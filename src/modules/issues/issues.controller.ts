@@ -12,3 +12,12 @@ export const createIssue = async (req: AuthRequest, res: Response, next: NextFun
     next(error);
   }
 }
+
+export const getAllIssues = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const issues = await issuesService.getAllIssues(req.query);
+    return res.status(StatusCodes.OK).json({ success: true, data: issues });
+  } catch (error) {
+    next(error);
+  }
+};
